@@ -82,6 +82,11 @@ oc apply -f auto-import-secret.yaml
 
 The secret should auto import, and the managed cluster should begin importing. This resource is automatically deleted once consumed.  
 Wait for the managed cluster to display the *JOINED* and *AVAILABLE* status. This may take several minutes.  
-
+```
+oc get managedcluster <cluster-name>
+```  
+```
+oc get pod -n open-cluster-management-agent
+```  
 
 ## Governance 
