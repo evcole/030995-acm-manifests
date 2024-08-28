@@ -1,0 +1,50 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-role
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-clusterroles
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRole
+                metadata:
+                  name: <clusterrole-1-name>
+                rules:
+                  - apiGroups: ["authorization.openshift.io", "rbac.authorization.k8s.io"]
+                    resources: ["rolebindings"]
+                    resourceNames: ["apps-edit", "apps-view", "pod-delete"]
+                    verbs: ["patch", "update"]
+                  - apiGroups: ["authorization.openshift.io"]
+                    resources: ["rolebindings"]
+                    verbs: ["get", "list"]
+                  - apiGroups: ["rbac.authorization.k8s.io"]
+                    resources: ["clusterroles"]
+                    resourceNames: ["edit", "view"]
+                    verbs: ["bind"]
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRole
+                metadata:
+                  name: <clusterrole-2-name>
+                rules:
+                  - apiGroups: ["apps"]
+                    resources: ["deployments/scale"]
+                    verbs: ["patch", "edit"]
+
