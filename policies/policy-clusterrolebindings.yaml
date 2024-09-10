@@ -1,0 +1,41 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-clusterrolebindings
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+spec:
+  remediationAction: inform
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-clusterrolebindings
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            # Example ClusterRoleBinding for cluster-admin role
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
+                metadata:
+                  name: <clusterrolebinding-1-name>
+              roleRef:
+                apiGroup: rbac.authorization.k8s.io
+                kind: ClusterRole
+                name: cluster-admin
+              subjects:
+              - apiGroup: rbac.authorization.k8s.io
+                kind: Group
+                name: <group-name>
+              - kind: ServiceAccount
+                name: <service-account-name>
+                namespace: <service-account-namespace>
+
+

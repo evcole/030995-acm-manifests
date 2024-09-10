@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: thanos-object-storage
+  namespace: open-cluster-management-observability
+type: Opaque
+stringData:
+  thanos.yaml: |
+    type: s3
+    config:
+      bucket: <s3_bucket_name>
+      endpoint: <aws_endpoint> # s3.us-east-1.amazonaws.com
+      insecure: true
+      access_key: <aws_access_key>
+      secret_key: <aws_secret_key>

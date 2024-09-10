@@ -66,7 +66,7 @@ Perform all further actions from this namespace.
 Replace <cluster-name> with the name of your cluster. When *cloud* and *vendor* are set to auto-detect, Advanced Cluster Management detects the cloud and vendor types automatically from the cluster that you are importing. You can optionally replace the values for *auto-detect* with the values for your cluster.  
 
 ```
-oc apply -f managed-cluster.yaml
+oc apply -f managed-cluster/managed-cluster.yaml
 ```  
 
 ### Import the managed cluster by using the auto import secret  
@@ -77,7 +77,7 @@ The auto import secret method can be performed using either a reference to the *
 Replace <cluster-name> with your cluster name, and replace <Token> and <cluster-api-url> with your API token and URL respectively. Ensure this is created in the <cluster-name> namespace.  
 
 ```
-oc apply -f auto-import-secret.yaml
+oc apply -f managed-cluster/auto-import-secret.yaml
 ```
 
 The secret should auto import, and the managed cluster should begin importing. This resource is automatically deleted once consumed.  
@@ -86,7 +86,48 @@ Wait for the managed cluster to display the *JOINED* and *AVAILABLE* status. Thi
 oc get managedcluster <cluster-name>
 ```  
 ```
-oc get pod -n open-cluster-management-agent
+oc get pods -n open-cluster-management-agent
+```  
+
+### Enable klusterlet add-ons for the managed clusters
+
+For each managed cluster you wish to enable klusterlet add-ons for, apply the YAML file ensuring the correct cluster name and namespace is set. For any add-ons you wish to disable, set *enabled: false*.  
+
+```
+oc apply -f managed-cluster/klusterlet-addon-config.yaml
+```
+
+## Health Metrics
+
+You can use Prometheus to expose metrics that are not exposed from the product console. The following procedures can be followed to expose metrics for both the hub and managed clusters.  
+
+### Scraping the hub cluster  
+
+The three files prefixed by "hub" will be applied to create a ServiceMonitor, Role, and associated RoleBinding for collecting services and exposing metrics on the hub cluster.  
+```
+oc apply -f health-metrics/hub-service-monitor.yaml  
+oc apply -f health-metrics/hub-monitoring-role.yaml  
+oc apply -f health-metrics/hub-monitoring-rolebinding.yaml
+```  
+
+### Scraping the managed cluster  
+
+The three files prefixed by "mc" will be applied to create a ServiceMonitor, Role, and associated RoleBinding for collecting services and exposing metrics on the managed cluster.  
+```
+oc apply -f health-metrics/mc-service-monitor.yaml  
+oc apply -f health-metrics/mc-monitoring-role.yaml  
+oc apply -f health-metrics/mc-monitoring-rolebinding.yaml
+```  
+
+### Scraping the standalone cluster  
+
+The three files prefixed by "sa" will be applied to create a ServiceMonitor, Role, and associated RoleBinding for collecting services and exposing metrics on the standalone cluster.  
+```
+oc apply -f health-metrics/sa-service-monitor.yaml  
+oc apply -f health-metrics/sa-monitoring-role.yaml  
+oc apply -f health-metrics/sa-monitoring-rolebinding.yaml
 ```  
 
 ## Governance 
+
+This section provides several example policies to enforce or inform according to a specific Placement.
