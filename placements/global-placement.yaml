@@ -1,0 +1,34 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: global-policyset-placement
+  namespace: rhacm-policies
+spec:
+  clusterSets:
+  - global
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: global-policyset-placement
+  namespace: rhacm-policies
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: global-policyset-placement
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+  name: global-policyset
+---
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: global-policyset
+  namespace: rhacm-policies
+spec:
+  description: ""
+  policies:
+  - policy-namespace
+  - policy-comp-operator
+  - policy-etcdencryption

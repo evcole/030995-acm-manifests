@@ -1,0 +1,32 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: prod-policyset-placement
+  namespace: rhacm-policies
+spec:
+  clusterSets:
+  - prod
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: prod-policyset-placement
+  namespace: rhacm-policies
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: prod-policyset-placement
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+  name: prod-policyset
+---
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: prod-policyset
+  namespace: rhacm-policies
+spec:
+  description: ""
+  policies:
+  - policy-fileintegrity-operator

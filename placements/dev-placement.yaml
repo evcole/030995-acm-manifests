@@ -1,0 +1,33 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: dev-policyset-placement
+  namespace: rhacm-policies
+spec:
+  clusterSets:
+  - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: dev-policyset-placement
+  namespace: rhacm-policies
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: dev-policyset-placement
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+  name: dev-policyset
+---
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: dev-policyset
+  namespace: rhacm-policies
+spec:
+  description: ""
+  policies:
+  - policy-clusterroles
+  - policy-clusterrolebindings
